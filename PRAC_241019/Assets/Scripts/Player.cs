@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float maxSpeed;
+    public float jumpPower;
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
@@ -18,6 +19,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        // Jump
+        if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumping"))  // When Button Up, Set Velocity very low.
+        {
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            anim.SetBool("isJumping", true);
+        }
+
         // Stop Speed
         if (Input.GetButtonUp("Horizontal"))  // When Button Up, Set Velocity very low.
         {
@@ -46,6 +54,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+
         // Move Speed
         float h = Input.GetAxisRaw("Horizontal");
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
@@ -60,6 +69,20 @@ public class Player : MonoBehaviour
             rigid.velocity = new Vector2(maxSpeed*(-1), rigid.velocity.y);
         }
 
-
+        //Landing Platform
+        if(rigid.velocity.y < 0)
+        {
+            Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Floor"));
+            if (rayHit.collider != null)
+            {
+                if (rayHit.distance < 0.5f) //0.5f => distance of (player core ~ other object)
+                {
+                    //Debug.Log(rayHit.collider.name);
+                    anim.SetBool("isJumping", false);
+                }
+            }
+        }
+        
     }
 }
