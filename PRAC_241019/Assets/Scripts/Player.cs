@@ -76,7 +76,7 @@ public class Player : MonoBehaviour
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Floor"));
             if (rayHit.collider != null)
             {
-                if (rayHit.distance < 0.5f) //0.5f => distance of (player core ~ other object)
+                if (rayHit.distance < 0.75f) //0.5f => distance of (player core ~ other object)
                 {
                     //Debug.Log(rayHit.collider.name);
                     anim.SetBool("isJumping", false);
